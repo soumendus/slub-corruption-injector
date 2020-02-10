@@ -6,7 +6,7 @@
  * Written by Soumendu Sekhar Satapathy, 9th Feb 2020
  * satapathy.soumendu@gmail.com
  * This is a block device driver which is intentionally made buggy to
- * inject SLUB corruption.
+ * inject SLUB corruption. This is written mainly for testing.
  *
  */
 
