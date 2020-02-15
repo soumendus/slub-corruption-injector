@@ -153,7 +153,7 @@ static int panicking_thread(void *arg)
 	int i = 0;
 
 	// This will try to allocate memory from all the Linux Kernel SLAB.
-	// If CON_SLUB_DEBUG_ON is set, then the dmesg ourput will show the
+	// If CONFIG_SLUB_DEBUG_ON is set, then the dmesg ourput will show the
 	// panic stack trace when the Linux Kernel Memory allocator calls
 	// slab_alloc_node() to allocate slab object from the corrupted slab.
 	for(i = 0; i < 15; i++)
