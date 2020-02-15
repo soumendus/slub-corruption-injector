@@ -141,7 +141,7 @@ struct page *pg;
 
 
 static void* srq = NULL;
-#define TEST_ALLOC_SIZE 512
+#define TEST_ALLOC_SIZE 192
 
 static int panicking_thread(void *arg)
 {
@@ -149,14 +149,14 @@ static int panicking_thread(void *arg)
 	void* tm;
     	struct task_struct *t_dma;
 	int err1 = 0;
-	int alloc_arr[15] = {8,16,32,64,128,512,1024,2048,4096,8192,16384,32768,65536,131072,262144};
+	int alloc_arr[34] = {8,16,24,32,40,48,56,64,72,80,88,96,104,112,120,128,136,144,152,160,168,176,184,192,512,1024,2048,4096,8192,16384,32768,65536,131072,262144};
 	int i = 0;
 
 	// This will try to allocate memory from all the Linux Kernel SLAB.
 	// If CONFIG_SLUB_DEBUG_ON is set, then the dmesg ourput will show the
 	// panic stack trace when the Linux Kernel Memory allocator calls
 	// slab_alloc_node() to allocate slab object from the corrupted slab.
-	for(i = 0; i < 15; i++)
+	for(i = 0; i < 34; i++)
 	{
 		srq = kmalloc(alloc_arr[i], GFP_KERNEL|GFP_DMA);
 		if (!srq) {
