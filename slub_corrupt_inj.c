@@ -139,22 +139,34 @@ typedef struct sg_request {	/* SG_MAX_QUEUE requests outstanding per file */
 
 struct page *pg;
 
+
+static void* srq = NULL;
+
 static int panicking_thread(void *arg)
 {
-#if 0
-	Sg_request *srq;
-#endif
-	struct scatterlist *srq;
+	void* srq;
+	void* tm;
+    	struct task_struct *t_dma;
+	int err1 = 0;
+	int alloc_arr[15] = {8,16,32,64,128,512,1024,2048,4096,8192,16384,32768,65536,131072,262144};
+	int i = 0;
 
-#if 0
-	srq = kmalloc(sizeof(Sg_request), GFP_KERNEL|GFP_DMA);
-#endif
-	srq = kmalloc(sizeof(struct scatterlist), GFP_KERNEL|GFP_DMA);
-	if (!srq) {
-		printk(KERN_WARNING, srq, "%s: kmalloc Sg_request "
-			    "failure\n", __func__);
-		return ERR_PTR(-ENOMEM);
+	// This will try to allocate memory from all the Linux Kernel SLAB.
+	// If CON_SLUB_DEBUG_ON is set, then the dmesg ourput will show the
+	// panic stack trace when the Linux Kernel Memory allocator calls
+	// slab_alloc_node() to allocate slab object from the corrupted slab.
+	for(i = 0; i < 15; i++)
+	{
+		srq = kmalloc(alloc_arr[i], GFP_KERNEL|GFP_DMA);
+		if (!srq) {
+			printk(KERN_WARNING, srq, "%s: kmalloc Sg_request "
+			    	"failure\n", __func__);
+			return ERR_PTR(-ENOMEM);
+		}
+		kfree(srq);
 	}
+
+    return 0;
 }
 
 // This is analogous to a DMA operation, writing to the un-mapped sg buffers
@@ -169,11 +181,9 @@ static int fw_doing_dma(void *arg)
     printk(KERN_INFO "fw_doing_dma cpu = %d\n",this_cpu);
     printk(KERN_INFO "I am thread: %s[PID = %d]\n", current->comm, current->pid);
 
+    // Writing to the Freed memory. Intentionally injecting Bug here.
     if(arg)
-#if 0
-    	memset((char*)arg, 'c', 100);
-#endif
-    	memset((char*)arg, 'c', sizeof(struct scatterlist));
+    	memset((char*)arg, 'c', 8192);
 
     put_cpu();
 
@@ -330,13 +340,6 @@ static unsigned long slub_corrupt_inj_size;
 module_param(slub_corrupt_inj_size, ulong, 0444);
 MODULE_PARM_DESC(slub_corrupt_inj_size, "Size of each slub_corrupt_inj disk in kbytes.");
 
-#if 0
-static struct slub_corrupt_inj_dev* slub_corrupt_inj_alloc(int i)
-{
-	return NULL;
-}
-#endif
-
 static struct slub_corrupt_inj_dev* slub_corrupt_inj_alloc(int i)
 {
 	/*
@@ -408,11 +411,6 @@ static int __init slub_corrupt_inj_init(void)
         struct slub_corrupt_inj_dev *dev;
 	int err = 0;
 
-#if 0
-	int err1 = 0;
-	struct task_struct *t_dma;
-	int this_cpu;
-#endif
 	struct scatterlist *sg_scmd;
 	int err1 = 0;
 	struct task_struct *t_dma;
@@ -425,7 +423,6 @@ static int __init slub_corrupt_inj_init(void)
                 return -EBUSY;
         }
 
-
 	dev = slub_corrupt_inj_alloc(0);
         if (!dev)
          	goto out_free;
@@ -435,23 +432,15 @@ static int __init slub_corrupt_inj_init(void)
 	dev->gd->queue = dev->queue;
         add_disk(dev->gd);
 
-
-#if 0
-	Sg_request *srq;
-#endif
-
-	struct scatterlist *srq;
-
-#if 0
-	srq = kmalloc(sizeof(Sg_request), GFP_KERNEL|GFP_DMA);
-#endif
-	srq = kmalloc(sizeof(struct scatterlist), GFP_KERNEL|GFP_DMA);
+	// Allocating Memory Here..
+	srq = kmalloc(8192, GFP_KERNEL|GFP_DMA);
 	if (!srq) {
 		printk(KERN_WARNING, srq, "%s: kmalloc Sg list "
 			    "failure\n", __func__);
 		return ERR_PTR(-ENOMEM);
 	}
 
+	// Freeing the allocated memory here..
         kfree(srq);
 
 	// Asynchronous thread is being scheduled, analogous to a DMA operation code path thread
