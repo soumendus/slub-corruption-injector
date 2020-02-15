@@ -93,6 +93,7 @@
 #define NO_SECTORS 536870912
 #define KERNEL_SECTOR_SIZE 512
 
+#if 0
 static int slub_corrupt_inj_major_nr;
 /*
  * The internal representation of our slub_corrupt_inj device.
@@ -138,6 +139,7 @@ typedef struct sg_request {	/* SG_MAX_QUEUE requests outstanding per file */
 } Sg_request;
 
 struct page *pg;
+#endif
 
 
 #if 0
@@ -202,6 +204,7 @@ static int fw_doing_dma(void *arg)
     return 0;
 }
 
+#if 0
 static struct slub_corrupt_inj_dev* slub_corrupt_inj_device = NULL; 
 
 static void slub_corrupt_inj_free(struct slub_corrupt_inj_dev *dev)
@@ -223,11 +226,13 @@ static void slub_corrupt_inj_free(struct slub_corrupt_inj_dev *dev)
         	kfree(dev);
 	}
 }
+#endif
 
 /*
  * Handle an I/O request.
  */
 
+#if 0
 static int slub_corrupt_inj_transfer(struct slub_corrupt_inj_dev *dev, unsigned
                         long sector, unsigned long nsect,
                         char *buffer, int write)
@@ -343,6 +348,9 @@ static unsigned long slub_corrupt_inj_size;
 module_param(slub_corrupt_inj_size, ulong, 0444);
 MODULE_PARM_DESC(slub_corrupt_inj_size, "Size of each slub_corrupt_inj disk in kbytes.");
 
+#endif
+
+#if 0
 static struct slub_corrupt_inj_dev* slub_corrupt_inj_alloc(int i)
 {
 	/*
@@ -408,6 +416,7 @@ out:
 	return NULL;
 
 }
+#endif
 
 static int __init slub_corrupt_inj_init(void)
 {
@@ -421,6 +430,7 @@ static int __init slub_corrupt_inj_init(void)
 	int this_cpu;
 	struct scsi_cmnd *scmd;
 
+#if 0
         err = slub_corrupt_inj_major_nr = register_blkdev(slub_corrupt_inj_major, "slub_corrupt_inj");
         if (err <= 0) {
                 printk(KERN_WARNING "slub_corrupt_inj: unable to get major number\n");
@@ -435,6 +445,7 @@ static int __init slub_corrupt_inj_init(void)
 
 	dev->gd->queue = dev->queue;
         add_disk(dev->gd);
+#endif
 
 	// Allocating Memory Here..
 	srq = kmalloc(TEST_ALLOC_SIZE, GFP_KERNEL|GFP_DMA);
@@ -460,8 +471,10 @@ static int __init slub_corrupt_inj_init(void)
         return 0;
 
 out_free:
+#if 0
         slub_corrupt_inj_free(dev);
         unregister_blkdev(slub_corrupt_inj_major, "slub_corrupt_inj");
+#endif
 
         printk("slub_corrupt_inj: module NOT loaded !!!\n");
         return -ENOMEM;
@@ -469,8 +482,10 @@ out_free:
 
 static void __exit slub_corrupt_inj_exit(void)
 {
+#if 0
 	slub_corrupt_inj_free(slub_corrupt_inj_device);
 	unregister_blkdev(slub_corrupt_inj_major_nr, "slub_corrupt_inj");
+#endif
         printk("slub_corrupt_inj: module unloaded !!!\n");
 }
 	
@@ -478,6 +493,6 @@ module_init(slub_corrupt_inj_init);
 module_exit(slub_corrupt_inj_exit);
 
 MODULE_ALIAS("slub_corrupt_inj");
-MODULE_DESCRIPTION("Buggy Block device driver as a SLUB corruption injector");
+MODULE_DESCRIPTION("Buggy Kernel Module as a SLUB corruption injector");
 MODULE_AUTHOR("Soumendu Sekhar Satapathy <satapathy.soumendu@gmail.com>");
 MODULE_LICENSE("GPL");
