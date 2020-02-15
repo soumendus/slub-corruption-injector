@@ -141,6 +141,7 @@ struct page *pg;
 
 
 static void* srq = NULL;
+#define TEST_ALLOC_SIZE 512
 
 static int panicking_thread(void *arg)
 {
@@ -183,7 +184,7 @@ static int fw_doing_dma(void *arg)
 
     // Writing to the Freed memory. Intentionally injecting Bug here.
     if(arg)
-    	memset((char*)arg, 'c', 8192);
+    	memset((char*)arg, 'c', TEST_ALLOC_SIZE);
 
     put_cpu();
 
@@ -433,7 +434,7 @@ static int __init slub_corrupt_inj_init(void)
         add_disk(dev->gd);
 
 	// Allocating Memory Here..
-	srq = kmalloc(8192, GFP_KERNEL|GFP_DMA);
+	srq = kmalloc(TEST_ALLOC_SIZE, GFP_KERNEL|GFP_DMA);
 	if (!srq) {
 		printk(KERN_WARNING, srq, "%s: kmalloc Sg list "
 			    "failure\n", __func__);
