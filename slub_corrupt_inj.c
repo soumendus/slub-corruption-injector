@@ -5,9 +5,9 @@
  *
  * Written by Soumendu Sekhar Satapathy, 9th Feb 2020
  * satapathy.soumendu@gmail.com
- * This is a block device driver which is intentionally made buggy to
- * inject SLUB corruption. This is written mainly for testing.
- *
+ * This Kernel Module is intentionally made buggy to
+ * inject SLUB corruption. This is written mainly for testing and reproducing
+ * Slab corruption issues.
  */
 
 #include <linux/module.h>
