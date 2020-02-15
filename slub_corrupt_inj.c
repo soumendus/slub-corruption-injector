@@ -140,7 +140,9 @@ typedef struct sg_request {	/* SG_MAX_QUEUE requests outstanding per file */
 struct page *pg;
 
 
+#if 0
 static void* srq = NULL;
+#endif
 #define TEST_ALLOC_SIZE 192
 
 static int panicking_thread(void *arg)
@@ -411,6 +413,7 @@ static int __init slub_corrupt_inj_init(void)
 {
         struct slub_corrupt_inj_dev *dev;
 	int err = 0;
+	void* srq = NULL;
 
 	struct scatterlist *sg_scmd;
 	int err1 = 0;
