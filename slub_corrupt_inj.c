@@ -1,7 +1,7 @@
 
 // SPDX-License-Identifier: GPL-2.0
 /*
- * slub_corrupt_inj.c.: SLUB corruption injector
+ * slub_corrupt_inj.c.: Slab Corruption Injector
  *
  * Written by Soumendu Sekhar Satapathy, 9th Feb 2020
  * satapathy.soumendu@gmail.com
